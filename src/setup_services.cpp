@@ -1,11 +1,11 @@
 #include "./setup_services.hpp"
 
 //#include <mm/screens/mm_logo_screen.hpp>
-#include "./screens/test_screen.hpp"
+#include "./screens/start_screen.hpp"
 
 template<>
 bool setup_service<MM::Services::FilesystemService>(MM::Engine& engine, [[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
-	engine.addService<MM::Services::FilesystemService>(argv[0], "mm_template", true, true
+	engine.addService<MM::Services::FilesystemService>(argv[0], "mm_lite_particles2d_demo", true, true
 #ifndef NDEBUG
 		// hack for local machine
 		//,std::vector<std::tuple<std::string, std::string, bool>>{{"../res/", "/", true}}
@@ -54,10 +54,10 @@ bool setup_service<MM::Services::ScreenDirector>(MM::Engine& engine, [[maybe_unu
 		//sd.screens["MM::Screens::mm_logo"],
 		//"my_project::Screens::main_menu"
 	//);
-	my_project::Screens::create_test_screen(engine, sd.screens["my_project::Screens::test_screen"]);
+	LiteParticles2DDemo::Screens::create_start_screen(engine, sd.screens["LiteParticles2DDemo::Screens::start_screen"]);
 
 	// queue the inital screen before enable
-	sd.queueChangeScreenTo("my_project::Screens::test_screen");
+	sd.queueChangeScreenTo("LiteParticles2DDemo::Screens::start_screen");
 
 	// enable by default, starts first screen
 	if (!engine.enableService<MM::Services::ScreenDirector>()) {
