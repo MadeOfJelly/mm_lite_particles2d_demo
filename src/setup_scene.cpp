@@ -67,26 +67,22 @@ void lite_particles2d_emit(
 	view.each([&lp_uq, &td, &rng](const auto& pos, Components::LiteParticles2DEmitter& lpe) {
 		lpe.age += lpe.age_delta * td.tickDelta;
 
-		if (lpe.age < 1.f) {
-			return;
-		}
+		for (; lpe.age >= 1.f; lpe.age -= 1.f) {
+			const auto type = entt::hashed_string::value(lpe.p_type.c_str());
 
-		lpe.age = 0.f; // TODO: dont discard ?
+			const size_t count = rng.range(lpe.particle_count);
+			for (size_t i = 0; i < count; i++) {
+				float dir = rng.range(lpe.p_dir) * glm::two_pi<float>();
+				lp_uq.queue.push(MM::Components::LiteParticle2D{
+					type, // type
 
-		const auto type = entt::hashed_string::value(lpe.p_type.c_str());
+					//{rng.negOneToOne() * 30.f, rng.negOneToOne() * 30.f}, // pos
+					pos.pos + /*lpe.pos_offset +*/ glm::vec2{rng.range(lpe.p_pos_x), rng.range(lpe.p_pos_y)}, // pos
+					glm::vec2{glm::cos(dir), glm::sin(dir)} * rng.range(lpe.p_dir_force), // vel
 
-		const size_t count = rng.range(lpe.particle_count);
-		for (size_t i = 0; i < count; i++) {
-			float dir = rng.range(lpe.p_dir) * glm::two_pi<float>();
-			lp_uq.queue.push(MM::Components::LiteParticle2D{
-				type, // type
-
-				//{rng.negOneToOne() * 30.f, rng.negOneToOne() * 30.f}, // pos
-				pos.pos + /*lpe.pos_offset +*/ glm::vec2{rng.range(lpe.p_pos_x), rng.range(lpe.p_pos_y)}, // pos
-				glm::vec2{glm::cos(dir), glm::sin(dir)} * rng.range(lpe.p_dir_force), // vel
-
-				rng.range(lpe.p_age) // age
-			});
+					rng.range(lpe.p_age) // age
+				});
+			}
 		}
 	});
 }
